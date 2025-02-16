@@ -218,8 +218,8 @@ void DynamicTexture::updateTexture(const glm::vec3& axis, const float angle)
 		else if (aoInt > 159) texels[0] = 2;
 		else texels[0] = 0;
 		//ThreadsPool::pool().dispatch(1024 * 1024, &(test), static_cast<void*>(texels), true);
-		ThreadsPool::pool().dispatch(w * h, &(integrate), static_cast<void*>(texels), true);
-		ThreadsPool::pool().dispatch(w * h, &(kernelHorizontal), static_cast<void*>(texels), true);
+		ThreadsPool::pool().dispatch(w * h, &(integrate), static_cast<void*>(texels), false);
+		ThreadsPool::pool().dispatch(w * h, &(kernelHorizontal), static_cast<void*>(texels), false);
 	}
 	else
 	{

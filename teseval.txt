@@ -1,0 +1,27 @@
+\*
+Tessellation Evaluation Shader
+
+Author: Blake Caven
+Last Modified: 2-6-25
+
+The initial version of this was built using assistance from ChatGPT
+*\
+
+#version 410
+layout(triangles, fractional_even_spacing) in;
+
+void main() {
+    vec3 p0 = gl_in[0].gl_Position.xyz;
+    vec3 p1 = gl_in[1].gl_Position.xyz;
+    vec3 p2 = gl_in[2].gl_Position.xyz;
+
+    // Compute interpolated position using barycentric coordinates
+    vec3 pos = gl_TessCoord.x * p0 + gl_TessCoord.y * p1 + gl_TessCoord.z * p2;
+
+    // Apply displacement
+    // right now we want it to be the color from the frag shader
+    //float height =  // Displacement mapping
+    //pos += vec3(0.0, height, 0.0);
+
+    gl_Position = vec4(pos, 1.0);
+}

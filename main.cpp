@@ -8,9 +8,9 @@ Date Modified: Janurary 26, 2025
 #include <vector>
 #include <string>
 #include <chrono>
-#include <SDL.h>
+#include <SDL3/SDL.h> // Linux changes: SDL linux libraries are split into SDL2/SDL3/etc. so this import needed to be changed from "SDL.h" to "SDL3/SDL.h"
 #include <GL/glew.h>
-#include <SDL_opengl.h>
+#include <SDL3/SDL_opengl.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -44,8 +44,10 @@ int main(int argc, char** argv)
 		std::cerr << "Failed to initialize SDL: " << SDL_GetError();
 		return 1;
 	}
+	// changed for LINUX and SDL3
+	//window = SDL_CreateWindow("ViewSpace", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, RESX, RESY, SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS);
+	window = SDL_CreateWindow("ViewSpace", RESX, RESY, SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS);
 
-	window = SDL_CreateWindow("ViewSpace", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, RESX, RESY, SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS);
 	if (window == nullptr)
 	{
 		std::cerr << "Failed to create window: " << SDL_GetError();
@@ -64,7 +66,8 @@ int main(int argc, char** argv)
 	if (glewErr != GLEW_OK)
 	{
 		std::cerr << "Glew error: " << glewGetErrorString(glewErr);
-		SDL_GL_DeleteContext(context);
+		//SDL_GL_DeleteContext(context);
+		SDL_GL_DestroyContext(context);
 		SDL_DestroyWindow(window);
 		SDL_Quit();
 		return 3;
@@ -73,17 +76,18 @@ int main(int argc, char** argv)
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0f);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    // also make patches triangles for tessellation
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
 
 	buildShaders();
 	buildBuffers();
 
 	DynamicTexture dt;
 	dt.uploadTexture(tex);
-
-	glm::mat4 camera = glm::lookAt(glm::vec3(0.0f, 200.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 camera = glm::lookAt(glm::vec3(0.0f, 5.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 proj = glm::perspective(
 		glm::radians(75.0f), 16.0f / 9.0f,
-		100.0f, 1000.0f
+		1.0f, 1000.0f
 	);
 
 	SDL_Event e;
@@ -98,15 +102,25 @@ int main(int argc, char** argv)
 		{
 			switch (e.type)
 			{
-			case SDL_QUIT: quit = true; break;
-			case SDL_KEYDOWN:
+			case SDL_EVENT_QUIT: quit = true; break;
+			case SDL_EVENT_KEY_DOWN:
 			{
-				switch (e.key.keysym.sym)
+				// this isn't real for SDL3
+				// https://github.com/ocornut/imgui/discussions/7727
+				switch (e.key.key)
 				{
-				case SDLK_UP: rotAxis += glm::vec3(1.0f, 0.0f, 0.0f); rotAng = 2.0f; break;
-				case SDLK_DOWN: rotAxis += glm::vec3(-1.0f, 0.0f, 0.0f); rotAng = 2.0f; break;
-				case SDLK_RIGHT: rotAxis += glm::vec3(0.0f, 1.0f, 0.0f); rotAng = 2.0f; break;
-				case SDLK_LEFT: rotAxis += glm::vec3(0.0f, -1.0f, 0.0f); rotAng = 2.0f; break;
+                    case SDLK_UP: rotAxis += glm::vec3(1.0f, 0.0f, 0.0f); rotAng = 2.0f; break;
+                    case SDLK_DOWN: rotAxis += glm::vec3(-1.0f, 0.0f, 0.0f); rotAng = 2.0f; break;
+                    case SDLK_RIGHT: rotAxis += glm::vec3(0.0f, 1.0f, 0.0f); rotAng = 2.0f; break;
+                    case SDLK_LEFT: rotAxis += glm::vec3(0.0f, -1.0f, 0.0f); rotAng = 2.0f; break;
+
+                    // move the camera
+                    // TODO: change this to something like orbital controls
+                    case SDLK_A: camera[3][0] -= 0.1; break;
+                    case SDLK_D: camera[3][0] += 0.1; break;
+                    case SDLK_W: camera[3][2] += 0.1; break;
+                    case SDLK_S: camera[3][2] -= 0.1; break;
+
 				}
 			}
 			}
@@ -136,7 +150,8 @@ int main(int argc, char** argv)
 	//DESTRUCTION
 	closeShaders();
 	closeBuffers();
-	SDL_GL_DeleteContext(context);
+	// switched to new name
+	SDL_GL_DestroyContext(context);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 
@@ -158,8 +173,31 @@ std::string readFile(std::string file)
 	return data;
 }
 
+GLuint compileShader(const char * filename) {
+    // load a single shader
+    std::string shaderSource = readFile("vert.txt");
+	const char* tempShade = shaderSource.c_str();
+	GLuint shader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(shader, 1, &tempShade, NULL);
+
+	glCompileShader(shader);
+	// check for shader compile errors
+	int success;
+	char infoLog[512];
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(shader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+
+    // return the shader
+    return shader;
+}
+
 void buildShaders()
 {
+    /*
 	std::string shader = readFile("vert.txt");
 	const char* tempVert = shader.c_str();
 	vert = glCreateShader(GL_VERTEX_SHADER);
@@ -168,13 +206,14 @@ void buildShaders()
 	glCompileShader(vert);
 	// check for shader compile errors
 	int success;
-	char infoLog[512];
 	glGetShaderiv(vert, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
 		glGetShaderInfoLog(vert, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
+    // consider making this a helper function
+    // TODO: add tesctrl and teseval shaders
 
 	shader = readFile("frag.txt");
 	const char* tempFrag = shader.c_str();
@@ -189,9 +228,21 @@ void buildShaders()
 		glGetShaderInfoLog(frag, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
+    */
+    // load the shaders using the helper function
+    // QUESTION: why were these originally global variables if they get deleted in this same function?
+    GLuint vert = compileShader("vert.txt");
+    GLuint tesCtl = compileShader("tesCtl.txt");
+    GLuint tesEval = compileShader("tesEval.txt");
+    GLuint frag = compileShader("frag.txt");
+
+    int success;
+    char infoLog[512];
 
 	program = glCreateProgram();
 	glAttachShader(program, vert);
+    glAttachShader(program, tesCtl);
+    glAttachShader(program, tesEval);
 	glAttachShader(program, frag);
 	glLinkProgram(program);
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
@@ -202,6 +253,8 @@ void buildShaders()
 	}
 
 	glDeleteShader(vert);
+    glDeleteShader(tesCtl);
+    glDeleteShader(tesEval);
 	glDeleteShader(frag);
 
 	glUseProgram(0);

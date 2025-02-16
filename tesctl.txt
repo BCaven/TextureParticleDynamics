@@ -1,0 +1,27 @@
+/*
+Tessellation Control Shader
+
+Author: Blake Caven
+Last Modified: 2-6-25
+
+The inital construction of this was created using assistance ChatGPT which was 
+mostly helpful *after* I knew what to do
+*/
+
+#version 410
+layout(vertices = 3) out; // Defines a triangle patch
+
+// grab the texture coordinate from vert.txt
+smooth in vec2 texCoord;
+
+void main() {
+    // base tessellation strategy
+    // look at https://stackoverflow.com/questions/24083656/tessellation-shader-opengl for future reference
+    if (gl_InvocationID == 0) { // Set tessellation levels once per patch
+        gl_TessLevelInner[0] = 4.0; // Inner tessellation level
+        gl_TessLevelOuter[0] = 4.0; // Outer tessellation levels
+        gl_TessLevelOuter[1] = 4.0;
+        gl_TessLevelOuter[2] = 4.0;
+    }
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+}
