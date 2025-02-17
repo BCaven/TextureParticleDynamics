@@ -1,0 +1,23 @@
+## topics to look up
+- [ ] SSAO
+- [ ] Parallax shaders
+- [ ] 
+# papers:
+- [ ] [Real-time Ray Traced Ambient Occlusion and Animation: Image quality and performance of hardware- accelerated ray traced ambient occlusion](https://www.diva-portal.org/smash/record.jsf?pid=diva2%3A1574351&dswid=5090)
+- [ ] [Real Time Graphics Rendering Capabilities of Modern Game Engines](https://pergamos.lib.uoa.gr/uoa/dl/object/2812851/file.pdf)
+- [ ] [Real-time photorealistic rendering for mobile devices](https://ieeexplore.ieee.org/abstract/document/6776103?casa_token=dQY9GterVfUAAAAA:XAzYKcVYnJRbS8S1S-rNt6OzVa710N6u45kmEGlLN1VslYsfj3T15DQ_TPDhGEzFhDWUDZVRdA)
+- [ ] [Approximating dynamic global illumination in image space](https://dl.acm.org/doi/abs/10.1145/1507149.1507161?casa_token=E55aKeyNveQAAAAA:_R5pO0jk6xP1MHd32DgXoWyo2Y0xpPVnSCOgs_lnGkgE43_NZq-UEAZcqJF4qNRPVqAlG-LCHzv6KQ)
+- [ ] [Image-Space Horizon-Based Ambient Occlusion](https://dl.acm.org/doi/pdf/10.1145/1401032.1401061?casa_token=ntWZuT3y_S4AAAAA:wLP1Jh_53QzX1WzeLg8t5Y5GSJIAOYd_mKPZcglM0U1wANpnj4tdv0ilFMxX6FheGrvIMVGtje82aA)
+- [ ] [The rendering equation](https://dl.acm.org/doi/abs/10.1145/15922.15902)
+- [ ] [A two-pass solution to the rendering equation: A synthesis of ray tracing and radiosity methods](https://dl.acm.org/doi/abs/10.1145/37402.37438)
+- [ ] [Animating sand as a fluid](https://dl.acm.org/doi/abs/10.1145/1073204.1073298?casa_token=DmefUdroV08AAAAA:zTRCLa35oOAEBKzwcNepvS7nYwVYiyKszpQnOBPaxLppTpT_rp5ZAaeqnQxINpMvXkFHaEvP_lRoEg)
+- [ ] [Animating Sand, Mud, and Snow](https://doi.org/10.1111/1467-8659.00299)
+- [ ] [Real-time Animation of Sand-Water Interaction](https://doi.org/10.1111/j.1467-8659.2008.01336.x)
+	- particle simulation for the sand
+- [ ] [Algorithm for Interactive Simulation of Sand Painting](https://www.jcad.cn/en/article/id/6b1a3526-a0ed-4d08-9444-3de0637a6674)
+	- [what is sand painting](https://en.wikipedia.org/wiki/Sandpainting)
+- [ ] [Computer Sand Art](https://d1wqtxts1xzle7.cloudfront.net/83372895/CAD_181_2021_1-23-libre.pdf?1649330077=&response-content-disposition=inline%3B+filename%3DIntroduction_The_Gift_of_Being_Disgusted.pdf&Expires=1739551161&Signature=MzZ~CUGDKwzap2NsXsIPQQECyC4XmfCq81rQ58y~OCpSysAw9l~NU4qw8dI~8am2h-eeb20FMUtyWWTw~r0ELt0ncuDmMsWrCgq5VlLGx06P~fvnjykiN-xw0StUwPBpqK~6GVkXr7KfwwmG47Htfr9I3OvbOUpIKNd04tSEOUhDiHsw9o9GL4SgpSbGmMvkePDMBQwId406P6kXOpi5ScZpHNQuh5qr87RXaQDLD5XspQRw9zLM0W1gc0C0t3qrtK6j7pUTYn5qvONHeFV~gOnOnyRzquyuhiwlkLtPhCNV1ng3BaCSHGsMrLXSAQZBiNbyns9ipK3xN~r5dfSrwg__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA)
+- [ ] [sand surface flow](https://cs.dartmouth.edu/~bozhu/papers/sand_surface_flow.pdf)
+	- particle simulation
+- [ ] [Generating textures on arbitrary surfaces using reaction-diffusion](https://dl.acm.org/doi/abs/10.1145/127719.122749)
+- [ ] [DyRT: dynamic response textures for real time deformation simulation with graphics hardware](https://dl.acm.org/doi/abs/10.1145/566570.566621)
